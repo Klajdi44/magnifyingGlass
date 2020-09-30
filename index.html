@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>clipPath</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+    }
+
+    svg {
+      outline: 1px solid red;
+    }
+  </style>
+</head>
+
+<body>
+
+  <svg id="svg">
+
+    <defs>
+
+      <clipPath id="magnGlass">
+
+        <circle id='maskRing' />
+
+      </clipPath>
+
+    </defs>
+    <image id='image' href="./wheresWally.jpg" />
+
+    <image id='bigImage' href="./wheresWally.jpg" clip-path='url(#magnGlass)' />
+
+    <circle id='ring' fill='none' stroke='red' stroke-width='1' />
+  </svg>
+
+
+  <script>
+    'use strict';
+    window.addEventListener('load', start);
+
+    const image = document.querySelector('#image');
+    const bigImage = document.querySelector('#bigImage');
+    const ring = document.querySelector('#ring');
+    const maskRing = document.querySelector('#maskRing');
+
+    //init sizes
+    const width = 256;
+    const height = 160;
+    const magnGlassRadius = 30;
+
+    function start() {
+      document.querySelector('#svg').setAttribute('viewBox', `0 0 
+     ${width} ${height}`);
+
+      //setting up sizes and positions
+      maskRing.setAttribute('cx', width / 2);
+      maskRing.setAttribute('cy', height / 2)
+      maskRing.setAttribute('r', magnGlassRadius);
+
+      //
+      ring.setAttribute('cx', width / 2);
+      ring.setAttribute('cy', height / 2);
+      ring.setAttribute('r', magnGlassRadius);
+      //
+      image.setAttribute('width', width);
+      image.setAttribute('height', height);
+      //
+      bigImage.setAttribute('x', -width / 2);
+      bigImage.setAttribute('y', -height / 2);
+      bigImage.setAttribute('width', width * 2);
+      bigImage.setAttribute('height', height * 2);
+
+      //  add event listener to big image
+      bigImage.addEventListener('mousedown', mouseDown);
+      bigImage.addEventListener('mouseup', mouseUp);
+    }
+
+    function mouseDown() {
+
+      bigImage.removeEventListener('mousedown', mouseDown);
+      bigImage.addEventListener('mousemove', mouseMove);
+    }
+
+    function mouseUp() {
+      bigImage.addEventListener('mousedown', mouseDown);
+      bigImage.removeEventListener('mousemove', mouseMove);
+    }
+
+    function mouseMove(event) {
+      let mousePosX = event.pageX / window.innerWidth * width;
+      let mousePosY = event.pageY / window.innerHeight * width * (window.innerHeight / window.innerWidth);
+      magnGlass(mousePosX, mousePosY);
+    }
+
+    function magnGlass(posX, posY) {
+
+      ring.setAttribute('cx', posX);
+      ring.setAttribute('cy', posY);
+
+      maskRing.setAttribute('cx', posX);
+      maskRing.setAttribute('cy', posY);
+
+      bigImage.setAttribute('x', posX * -1);
+      bigImage.setAttribute('y', posY * -1);
+    }
+  </script>
+</body>
+
+</html>
