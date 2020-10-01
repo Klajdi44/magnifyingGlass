@@ -14,6 +14,10 @@
     svg {
       outline: 1px solid red;
     }
+
+    #bigImage {
+      cursor: grab;
+    }
   </style>
 </head>
 
@@ -52,6 +56,17 @@
     const height = 160;
     const magnGlassRadius = 30;
 
+    //key down
+
+    let globalPosX = width / 2;
+    let globalPosY = height / 2;
+
+    let keyLe = false;
+    let keyRi = false;
+    let keyU = false;
+    let keyDo = false;
+
+
     function start() {
       document.querySelector('#svg').setAttribute('viewBox', `0 0 
      ${width} ${height}`);
@@ -77,6 +92,12 @@
       //  add event listener to big image
       bigImage.addEventListener('mousedown', mouseDown);
       bigImage.addEventListener('mouseup', mouseUp);
+
+      //key down code
+      document.addEventListener('keydown', keyDown);
+      document.addEventListener('keyup', keyUp);
+
+      Arrowmove()
     }
 
     function mouseDown() {
@@ -96,6 +117,71 @@
       magnGlass(mousePosX, mousePosY);
     }
 
+    //keyDown code
+    function keyDown(event) {
+      console.log('keydown', event.keyCode);
+
+      if (event.key === 'ArrowLeft') {
+        keyLe = true;
+
+      } else if (event.key === 'ArrowUp') {
+        keyU = true;
+
+      } else if (event.key === 'ArrowRight') {
+        keyRi = true;
+      } else if (event.key === 'ArrowDown') {
+        keyDo = true;
+      }
+
+    }
+    //keyUp code
+    function keyUp(event) {
+      console.log('up', event.key);
+
+      if (event.key === 'ArrowLeft') {
+        keyLe = false;
+
+      } else if (event.key === 'ArrowUp') {
+        keyU = false;
+
+      } else if (event.key === 'ArrowRight') {
+        keyRi = false;
+      } else if (event.key === 'ArrowDown') {
+        keyDo = false;
+      }
+
+    }
+
+    function Arrowmove() {
+      console.log('move');
+
+      const Xpos = parseInt(bigImage.getAttribute('x'));
+      const Ypos = parseInt(bigImage.getAttribute('y'));
+      const speed = 1;
+
+      if (keyLe) {
+        magnGlass(-Xpos - speed, globalPosY);
+      }
+      if (keyRi) {
+        magnGlass(-Xpos + speed, globalPosY);
+      }
+      if (keyU) {
+        magnGlass(globalPosX, -Ypos - speed);
+      }
+      if (keyDo) {
+        magnGlass(globalPosX, -Ypos + speed);
+      }
+
+      setTimeout(Arrowmove, 10);
+    }
+
+
+
+
+
+
+
+
     function magnGlass(posX, posY) {
 
       ring.setAttribute('cx', posX);
@@ -106,6 +192,9 @@
 
       bigImage.setAttribute('x', posX * -1);
       bigImage.setAttribute('y', posY * -1);
+
+      globalPosX = posX;
+      globalPosY = posY;
     }
   </script>
 </body>
